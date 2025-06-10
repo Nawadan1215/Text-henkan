@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>セリフ体変換ツール</title>
+    <!-- Google Fontsの読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Yusei+Magic&display=swap" rel="stylesheet">
     <style>
         /* ここからCSS */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Yusei Magic', sans-serif; /* 本文にYusei Magicを適用 */
             background-color: #f0f2f5;
             color: #333;
             display: flex;
@@ -30,6 +34,7 @@
         }
 
         h1 {
+            font-family: 'Hachi Maru Pop', cursive; /* タイトルにHachi Maru Popを適用 */
             color: #4285f4; /* Google Blue */
             margin-bottom: 20px;
             font-size: 2em;
@@ -50,6 +55,7 @@
             font-size: 1.1em;
             resize: vertical; /* 縦方向にリサイズ可能にする */
             box-sizing: border-box; /* paddingとborderをwidthに含める */
+            font-family: 'Yusei Magic', sans-serif; /* テキストエリアにもYusei Magic */
         }
 
         .button-group {
@@ -69,6 +75,7 @@
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-family: 'Hachi Maru Pop', cursive; /* ボタンにHachi Maru Pop */
         }
 
         button:hover {
@@ -103,6 +110,7 @@
             word-break: break-all; /* どこでも改行可能にする */
             margin-bottom: 10px; /* コピーボタンとの間にスペース */
             text-align: center; /* 中央揃え */
+            font-family: 'Yusei Magic', sans-serif; /* 出力にもYusei Magic */
         }
 
         .copy-button {
@@ -114,6 +122,7 @@
             font-size: 0.9em;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            font-family: 'Hachi Maru Pop', cursive; /* コピーボタンにもHachi Maru Pop */
         }
 
         .copy-button:hover {
@@ -171,9 +180,6 @@
 
     <script>
         // ここからJavaScript
-
-        // 各文字をセリフ体Unicode文字にマッピングするオブジェクト
-        // 最も一般的なセリフ体（Sans-Serif Bold）に近い文字を使用
         const serifCharMap = {
             'A': '𝖠', 'B': '𝖡', 'C': '𝖢', 'D': '𝖣', 'E': '𝖤', 'F': '𝖥', 'G': '𝖦', 'H': '𝖧', 'I': '𝖨', 'J': '𝖩', 'K': '𝖪', 'L': '𝖫', 'M': '𝖬',
             'N': '𝖭', 'O': '𝖮', 'P': '𝖯', 'Q': '𝖰', 'R': '𝖱', 'S': '𝖲', 'T': '𝖳', 'U': '𝖴', 'V': '𝖵', 'W': '𝖶', 'X': '𝖷', 'Y': '𝖸', 'Z': '𝖹',
@@ -181,7 +187,6 @@
             'n': '𝗇', 'o': '𝗈', 'p': '𝗉', 'q': '𝗊', 'r': '𝗋', 's': '𝗌', 't': '𝗍', 'u': '𝗎', 'v': '𝗏', 'w': '𝗐', 'x': '𝗑', 'y': '𝗒', 'z': '𝗓',
             '0': '𝟢', '1': '𝟣', '2': '𝟤', '3': '𝟥', '4': '𝟦', '5': '𝟧', '6': '𝟨', '7': '𝟩', '8': '𝟪', '9': '𝟫',
             ' ': ' ' // スペースはそのまま変換
-            // 他の記号や文字を追加することも可能です。
         };
 
         function convertText() {
@@ -190,7 +195,6 @@
 
             for (let i = 0; i < inputText.length; i++) {
                 const char = inputText[i];
-                // マッピングが見つからない場合は元の文字をそのまま使用
                 convertedText += serifCharMap[char] || char;
             }
 
@@ -201,15 +205,14 @@
             const outputText = document.getElementById('output').innerText;
             try {
                 await navigator.clipboard.writeText(outputText);
-                // コピー成功時のフィードバック
                 const copyButton = document.querySelector('.copy-button');
                 const originalText = copyButton.innerText;
                 copyButton.innerText = 'コピーしました！';
-                copyButton.style.backgroundColor = '#28a745'; // コピー成功で色を変える
+                copyButton.style.backgroundColor = '#28a745';
                 setTimeout(() => {
                     copyButton.innerText = originalText;
-                    copyButton.style.backgroundColor = '#34a853'; // 元の色に戻す
-                }, 1500); // 1.5秒後に元に戻す
+                    copyButton.style.backgroundColor = '#34a853';
+                }, 1500);
             } catch (err) {
                 console.error('テキストのコピーに失敗しました:', err);
                 alert('テキストのコピーに失敗しました。手動でコピーしてください。');
