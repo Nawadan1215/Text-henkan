@@ -1,44 +1,220 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <title>セリフ体テキスト変換</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geminiのセリフ体変換ツール</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        textarea { width: 80%; height: 100px; margin-bottom: 10px; }
-        button { padding: 10px 20px; }
-        #output { margin-top: 20px; border: 1px solid #ccc; padding: 10px; min-height: 50px; }
+        /* ここからCSS */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4285f4; /* Google Blue */
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        p {
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        textarea {
+            width: calc(100% - 20px);
+            height: 120px;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1em;
+            resize: vertical; /* 縦方向にリサイズ可能にする */
+            box-sizing: border-box; /* paddingとborderをwidthに含める */
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px; /* ボタン間のスペース */
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #4285f4; /* Google Blue */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            background-color: #357ae8; /* Darker Google Blue */
+            transform: translateY(-2px); /* 少し浮き上がるエフェクト */
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        #outputContainer {
+            margin-top: 25px;
+            background-color: #e8f0fe; /* Light Google Blue */
+            border: 1px solid #c5dafe;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 60px;
+            word-wrap: break-word; /* 長い単語でも折り返す */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #output {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #1a73e8; /* Deeper Google Blue */
+            white-space: pre-wrap; /* 改行を保持し、折り返す */
+            word-break: break-all; /* どこでも改行可能にする */
+            margin-bottom: 10px; /* コピーボタンとの間にスペース */
+            text-align: center; /* 中央揃え */
+        }
+
+        .copy-button {
+            background-color: #34a853; /* Google Green */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background-color: #2c8c4a; /* Darker Google Green */
+        }
+
+        .copy-button:active {
+            transform: translateY(0);
+        }
+
+        /* レスポンシブ対応 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                max-width: 95%;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            textarea {
+                height: 100px;
+            }
+            #output {
+                font-size: 1.1em;
+            }
+            .button-group {
+                flex-direction: column; /* 狭い画面では縦並び */
+                gap: 10px;
+            }
+        }
+        /* ここまでCSS */
     </style>
 </head>
 <body>
-    <h1>セリフ体テキスト変換ツール</h1>
-    <p>入力したテキストをセリフ体のような特殊なUnicode文字に変換します。</p>
-    <textarea id="inputText" placeholder="ここにテキストを入力してください..."></textarea><br>
-    <button onclick="convertText()">変換</button>
-    <div id="output"></div>
+    <div class="container">
+        <h1>Geminiのセリフ体変換ツール</h1>
+        <p>入力したテキストを、𝖯𝗋𝗈𝖡𝗈𝗍 のような特殊なセリフ体Unicode文字に変換します。</p>
+
+        <textarea id="inputText" placeholder="ここにテキストを入力してください..."></textarea>
+
+        <div class="button-group">
+            <button onclick="convertText()">セリフ体に変換</button>
+        </div>
+
+        <div id="outputContainer">
+            <p id="output">変換結果がここに表示されます。</p>
+            <button class="copy-button" onclick="copyText()">コピー</button>
+        </div>
+    </div>
 
     <script>
+        // ここからJavaScript
+
+        // 各文字をセリフ体Unicode文字にマッピングするオブジェクト
+        // 最も一般的なセリフ体（Sans-Serif Bold）に近い文字を使用
+        const serifCharMap = {
+            'A': '𝖠', 'B': '𝖡', 'C': '𝖢', 'D': '𝖣', 'E': '𝖤', 'F': '𝖥', 'G': '𝖦', 'H': '𝖧', 'I': '𝖨', 'J': '𝖩', 'K': '𝖪', 'L': '𝖫', 'M': '𝖬',
+            'N': '𝖭', 'O': '𝖮', 'P': '𝖯', 'Q': '𝖰', 'R': '𝖱', 'S': '𝖲', 'T': '𝖳', 'U': '𝖴', 'V': '𝖵', 'W': '𝖶', 'X': '𝖷', 'Y': '𝖸', 'Z': '𝖹',
+            'a': '𝖺', 'b': '𝖻', 'c': '𝖼', 'd': '𝖽', 'e': '𝖾', 'f': '𝖿', 'g': '𝗀', 'h': '𝗁', 'i': '𝗂', 'j': '𝗃', 'k': '𝗄', 'l': '𝗅', 'm': '𝗆',
+            'n': '𝗇', 'o': '𝗈', 'p': '𝗉', 'q': '𝗊', 'r': '𝗋', 's': '𝗌', 't': '𝗍', 'u': '𝗎', 'v': '𝗏', 'w': '𝗐', 'x': '𝗑', 'y': '𝗒', 'z': '𝗓',
+            '0': '𝟢', '1': '𝟣', '2': '𝟤', '3': '𝟥', '4': '𝟦', '5': '𝟧', '6': '𝟨', '7': '𝟩', '8': '𝟪', '9': '𝟫',
+            ' ': ' ' // スペースはそのまま変換
+            // 他の記号や文字を追加することも可能です。
+        };
+
         function convertText() {
             const inputText = document.getElementById('inputText').value;
             let convertedText = '';
 
-            // ここに変換ロジックを実装します
-            // 例: 各文字をセリフ体Unicode文字にマッピング
-            const charMap = {
-                'A': '𝖠', 'B': '𝖡', 'C': '𝖢', 'D': '𝖣', 'E': '𝖤', 'F': '𝖥', 'G': '𝖦', 'H': '𝖧', 'I': '𝖨', 'J': '𝖩', 'K': '𝖪', 'L': '𝖫', 'M': '𝖬',
-                'N': '𝖭', 'O': '𝖮', 'P': '𝖯', 'Q': '𝖰', 'R': '𝖱', 'S': '𝖲', 'T': '𝖳', 'U': '𝖴', 'V': '𝖵', 'W': '𝖶', 'X': '𝖷', 'Y': '𝖸', 'Z': '𝖹',
-                'a': '𝖺', 'b': '𝖻', 'c': '𝖼', 'd': '𝖽', 'e': '𝖾', 'f': '𝖿', 'g': '𝗀', 'h': '𝗁', 'i': '𝗂', 'j': '𝗃', 'k': '𝗄', 'l': '𝗅', 'm': '𝗆',
-                'n': '𝗇', 'o': '𝗈', 'p': '𝗉', 'q': '𝗊', 'r': '𝗋', 's': '𝗌', 't': '𝗍', 'u': '𝗎', 'v': '𝗏', 'w': '𝗐', 'x': '𝗑', 'y': '𝗒', 'z': '𝗓',
-                '0': '𝟢', '1': '𝟣', '2': '𝟤', '3': '𝟥', '4': '𝟦', '5': '𝟧', '6': '𝟨', '7': '𝟩', '8': '𝟪', '9': '𝟫'
-                // 他の文字や記号も必要に応じて追加
-            };
-
             for (let i = 0; i < inputText.length; i++) {
                 const char = inputText[i];
-                convertedText += charMap[char] || char; // マッピングが見つからない場合は元の文字を使用
+                // マッピングが見つからない場合は元の文字をそのまま使用
+                convertedText += serifCharMap[char] || char;
             }
 
             document.getElementById('output').innerText = convertedText;
         }
+
+        async function copyText() {
+            const outputText = document.getElementById('output').innerText;
+            try {
+                await navigator.clipboard.writeText(outputText);
+                // コピー成功時のフィードバック
+                const copyButton = document.querySelector('.copy-button');
+                const originalText = copyButton.innerText;
+                copyButton.innerText = 'コピーしました！';
+                copyButton.style.backgroundColor = '#28a745'; // コピー成功で色を変える
+                setTimeout(() => {
+                    copyButton.innerText = originalText;
+                    copyButton.style.backgroundColor = '#34a853'; // 元の色に戻す
+                }, 1500); // 1.5秒後に元に戻す
+            } catch (err) {
+                console.error('テキストのコピーに失敗しました:', err);
+                alert('テキストのコピーに失敗しました。手動でコピーしてください。');
+            }
+        }
+        // ここまでJavaScript
     </script>
 </body>
 </html>
